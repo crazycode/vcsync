@@ -1,9 +1,81 @@
 = vcsync
 
-Description goes here.
+版本控制目录同步工具。
+
+当你有多台工作电脑时，工作使用git、svn等进行版本控制，在不同电脑上建立这些版本控制目录，是一个很麻烦的事。
+
+vcsync试图解决这个问题，即扫描本地所有版本控制目录，加入到一个文件中，这个文件可以放在Dropbox等同步文件系统中。另一台机器只需要运行vcsync，即可加入新的同步目录，并更新和提交所有有过的修改。
+
+= Usage
+
+== 建立本地描述文件
+
+在Home目录建立.vcsync_config，内容如下：
+
+vc_database: ~/Dropbox/vcsync.yml
+vc_dir:
+- ~/works
+- ~/github
+
+vc_dir定义了一个包括版本控制目录的顶级目录数组，里面可以有多个不同的版本控制库。vcsync会扫描这些目录，检查下面有哪些是svn/git工作目录，并把版本控制信息放到到vc_database指定的文件中。
+
+== 扫描版本控制目录
+
+执行
+
+vcsync sync
+
+先检查vc_database文件中的版本控制目录是否存在，如果不存在，建立之；然后再检查vc_dir数组，如果有新的版本控制目录，则加入到vc_database文件中。
+
+== 更新
+
+执行
+
+vcsync update
+
+更新所有vc_database文件中定义的版本控制目录。如果某个目录不存在，会建立并同步。
+
+== 提交
+
+执行
+
+vcsync commit
+
+检查所有vc_database文件定义的版本控制目录，如果有需要提交的内容，列出变量内容，然后提示是否提交（Yes/No/Quit）
+* Yes: 执行提交，会先提示输入Comment。
+* No: 不提交，继续检查下一个目录。
+* Quit: 直接退出，会定位到需要提交内容的目录，让用户执行进一步的操作。
+
+== 删除某个目录
+
+如果某个版本控制目录不希望再保留，直接删除目录是没有用的，会在下一次update时重新建立这个目录。
+需要执行以下命令：
+
+vcsync remove <dir>
+
+== 不同步某个目录
+
+如果某个版本控制目录不希望被同步到其它机器，则执行：
+
+vcsync skip <dir>
+
+== 信息查询
+
+支持以下命令：
+
+* vcsync list
+* vcsync listskiped
+* vcsync listparent
+
+
+== 扩展
+
+考虑在vc_database中加密保存目录和url信息。
+
+= Other
 
 == Contributing to vcsync
- 
+
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
@@ -14,6 +86,6 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2011 crazycode. See LICENSE.txt for
+Copyright (c) 2011 crazycode (crazycode#gmail). See LICENSE.txt for
 further details.
 
