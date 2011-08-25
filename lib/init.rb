@@ -1,7 +1,9 @@
 require 'rubygems'
 require 'thor'
+require 'pathname'
 
 class ThorRunner < Thor
+  include VCSYNC
   desc "start", "start server"
   method_option :environment,:default => "development", :aliases => "-e",:desc => "which enviroment you want server run."
   method_option :daemon, :type => :boolean, :default => false, :aliases => "-d",:desc => "runing on daemon mode?"
@@ -16,6 +18,28 @@ class ThorRunner < Thor
   desc "restart" ,"restart server"
   def restart
     puts "restart"
+  end
+
+  desc "test", "test some code"
+  def test
+    require 'pp'
+    pp Configuration.config
+    pp Configuration.dbfile
+    pp Configuration.vc_dirs
+  end
+
+  desc "sync", "sync all vc dir."
+  def sync
+    require 'pp'
+    runner = Runner.new
+    Configuration.vc_dirs.each do |id, dir_str|
+      puts "id=#{id}, dir=#{dir_str}"
+      dir = Pathname.new(dir_str)
+      vdirs = runner.find_vc(dir)
+      puts "================ #{dir} ================"
+      pp vdirs
+    end
+
   end
 end
 

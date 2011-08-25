@@ -20,8 +20,9 @@ sudo gem install vcsync
 
 vc_database: ~/Dropbox/vcsync.yml
 vc_dir:
-- ~/works
-- ~/github
+  work: ~/works
+  github: ~/github
+  opensource-svn: ~/research/opensources
 
 vc_dir定义了一个包括版本控制目录的顶级目录数组，里面可以有多个不同的版本控制库。vcsync会扫描这些目录，检查下面有哪些是svn/git工作目录，并把版本控制信息放到到vc_database指定的文件中。
 
