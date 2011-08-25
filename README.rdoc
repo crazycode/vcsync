@@ -8,6 +8,12 @@ vcsync试图解决这个问题，即扫描本地所有版本控制目录，加�
 
 = Usage
 
+== 安装
+
+执行
+
+sudo gem install vcsync
+
 == 建立本地描述文件
 
 在Home目录建立.vcsync_config，内容如下：
