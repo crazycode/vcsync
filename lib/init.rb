@@ -38,6 +38,10 @@ class ThorRunner < Thor
     alldirs = Array.new
     Configuration.vc_dirs.each do |id, dir_str|
       puts "id=#{id}, dir=#{dir_str}"
+      next if dir_str.nil?
+
+      dir_str.gsub!(/~/, ENV['HOME'])
+      dir_str.gsub!(/\$HOME/, ENV['HOME'])
       dir = Pathname.new(dir_str)
       vdirs = runner.find_vc(dir)
       alldirs += vdirs
