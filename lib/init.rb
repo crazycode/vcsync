@@ -4,6 +4,7 @@ require 'pathname'
 
 class ThorRunner < Thor
   include VCSYNC
+
   desc "start", "start server"
   method_option :environment,:default => "development", :aliases => "-e",:desc => "which enviroment you want server run."
   method_option :daemon, :type => :boolean, :default => false, :aliases => "-d",:desc => "runing on daemon mode?"
