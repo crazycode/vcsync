@@ -1,11 +1,6 @@
 require 'pathname'
 module VCSYNC
 
-  class VersionDir
-    attr_accessor :path, :vc_type, :remotes
-  end
-
-
   class Runner
 
     def find_vc(dir)
@@ -31,12 +26,8 @@ module VCSYNC
 
 
     def create_git_version_dir(dir)
-      v = VersionDir.new
-      v.vc_type = :git
-      v.path = dir.to_s
-      Dir.chdir(dir)
-      # todo git remote -v
-      v
+      puts "found #{dir}"
+      GitDir.new(dir)
     end
 
     def create_svn_version_dir(dir)
@@ -44,7 +35,7 @@ module VCSYNC
       v.vc_type = :svn
       v.path = dir.to_s
       Dir.chdir(dir)
-      # todo svn info
+      # todo git remote -v
       v
     end
 

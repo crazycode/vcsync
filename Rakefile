@@ -13,7 +13,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "vcsync"
-  gem.executables     = %W(check-taskr)
+  gem.executables     = %W(vcsync)
   gem.homepage = "http://github.com/crazycode/vcsync"
   gem.license = "MIT"
   gem.summary = %Q{Version Control System Sync}

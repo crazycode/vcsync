@@ -31,13 +31,20 @@ class ThorRunner < Thor
   desc "sync", "sync all vc dir."
   def sync
     require 'pp'
+    require 'yaml'
     runner = Runner.new
+
+    alldirs = Array.new
     Configuration.vc_dirs.each do |id, dir_str|
       puts "id=#{id}, dir=#{dir_str}"
       dir = Pathname.new(dir_str)
       vdirs = runner.find_vc(dir)
       puts "================ #{dir} ================"
-      pp vdirs
+      alldirs += vdirs
+    end
+
+    File.open(Configuration.dbfile, 'w') do |f|
+      YAML::dump(alldirs, f)
     end
 
   end
