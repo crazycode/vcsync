@@ -40,7 +40,6 @@ class ThorRunner < Thor
       puts "id=#{id}, dir=#{dir_str}"
       dir = Pathname.new(dir_str)
       vdirs = runner.find_vc(dir)
-      puts "================ #{dir} ================"
       alldirs += vdirs
     end
 
