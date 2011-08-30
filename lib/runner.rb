@@ -2,7 +2,7 @@ require 'rubygems'
 require 'thor'
 require 'pathname'
 
-class ThorRunner < Thor
+class VcSyncRunner < Thor
   include VCSYNC
 
   desc "start", "start server"
@@ -33,7 +33,7 @@ class ThorRunner < Thor
   def sync
     require 'pp'
     require 'yaml'
-    runner = Runner.new
+    scanner = Scanner.new
 
     alldirs = Array.new
     Configuration.vc_dirs.each do |id, dir_str|
@@ -43,7 +43,7 @@ class ThorRunner < Thor
       dir_str.gsub!(/~/, ENV['HOME'])
       dir_str.gsub!(/\$HOME/, ENV['HOME'])
       dir = Pathname.new(dir_str)
-      vdirs = runner.find_vc(dir)
+      vdirs = scanner.find_vc(dir)
       alldirs += vdirs
     end
 
@@ -54,4 +54,4 @@ class ThorRunner < Thor
   end
 end
 
-ThorRunner.start
+VcSyncRunner.start

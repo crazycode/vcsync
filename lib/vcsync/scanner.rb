@@ -1,12 +1,7 @@
 require 'pathname'
 module VCSYNC
 
-  class VersionDir
-    attr_accessor :path, :vc_type, :remotes
-  end
-
-
-  class Runner
+  class Scanner
 
     def find_vc(dir)
       puts "dir=#{dir}, check #{File.directory?(dir)}"
