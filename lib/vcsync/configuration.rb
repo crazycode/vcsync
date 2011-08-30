@@ -16,7 +16,11 @@ module VCSYNC
     end
 
     def self.dbfile
-      config['vc_database']
+      dbfile = config['vc_database']
+      dbfile.gsub!(/~/, ENV['HOME'])
+      dbfile.gsub!(/\$HOME/, ENV['HOME'])
+
+      dbfile
     end
 
     def self.vc_dirs

@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'thor'
 require 'pathname'
+require 'yaml'
+
 
 class VcSyncRunner < Thor
   include VCSYNC
@@ -31,27 +33,22 @@ class VcSyncRunner < Thor
 
   desc "sync", "sync all vc dir."
   def sync
-    require 'pp'
-    require 'yaml'
     scanner = Scanner.new
-
-    alldirs = Array.new
-    Configuration.vc_dirs.each do |id, dir_str|
-      puts "id=#{id}, dir=#{dir_str}"
-      next if dir_str.nil?
-
-      dir_str.gsub!(/~/, ENV['HOME'])
-      dir_str.gsub!(/\$HOME/, ENV['HOME'])
-      dir = Pathname.new(dir_str)
-      vdirs = scanner.find_vc(dir)
-      alldirs += vdirs
-    end
-
-    File.open(Configuration.dbfile, 'w') do |f|
-      YAML::dump(alldirs, f)
-    end
-
+    scanner.sync_to_yaml
   end
+
+  desc "list", "list all version control dirs in database file."
+  def list
+    scanner = Scanner.new
+    alldirs = scanner.load_from_yaml
+    alldirs.each do |dir|
+      puts "#{dir.path}"
+      dir.remotes.each do |r|
+        puts "  #{r[:name]}:#{r[:url]}"
+      end unless dir.remotes.empty?
+    end
+  end
+
 end
 
 VcSyncRunner.start

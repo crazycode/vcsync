@@ -3,8 +3,40 @@ module VCSYNC
 
   class Scanner
 
+
+    def sync_to_yaml
+
+      alldirs = Array.new
+      Configuration.vc_dirs.each do |id, dir_str|
+        puts "id=#{id}, dir=#{dir_str}"
+        next if dir_str.nil?
+
+        dir_str.gsub!(/~/, ENV['HOME'])
+        dir_str.gsub!(/\$HOME/, ENV['HOME'])
+        dir = Pathname.new(dir_str)
+        vdirs = find_vc(dir)
+
+        alldirs += vdirs
+      end
+
+      File.open(Configuration.dbfile, 'w') do |f|
+        YAML::dump(alldirs, f)
+      end
+
+    end
+
+    # Load Version Control Dirs from Database file (YAML)
+    def load_from_yaml
+      unless File.exists?(Configuration.dbfile)
+        puts "Not Found #{Configuration.dbfile}, please run 'vcsync sync' first!"
+        return []
+      end
+      File.open(Configuration.dbfile, 'r') do |f|
+        YAML::load(f)
+      end
+    end
+
     def find_vc(dir)
-      puts "dir=#{dir}, check #{File.directory?(dir)}"
       return unless dir.directory?
 
       vdirs = []
