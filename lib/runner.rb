@@ -46,6 +46,7 @@ class VcSyncRunner < Thor
       dir.remotes.each do |r|
         puts "  #{r[:name]}:#{r[:url]}"
       end unless dir.remotes.empty?
+      puts
     end
   end
 

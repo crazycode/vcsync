@@ -16,7 +16,7 @@ module VCSYNC
         dir = Pathname.new(dir_str)
         vdirs = find_vc(dir)
 
-        alldirs += vdirs
+        alldirs += vdirs unless vdirs.nil?
       end
 
       File.open(Configuration.dbfile, 'w') do |f|
