@@ -1,4 +1,4 @@
-require 'vcsync/model2'
+require 'vcsync/model'
 module VCSYNC
 
   class GitDir < VersionDir
@@ -9,7 +9,6 @@ module VCSYNC
       @path = dir.to_s
       check_version_dir
     end
-
 
     private
     def check_version_dir
@@ -26,7 +25,5 @@ module VCSYNC
       end
     end
   end
-
-
 
 end

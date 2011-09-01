@@ -5,7 +5,6 @@ module VCSYNC
 
 
     def sync_to_yaml
-
       alldirs = Array.new
       Configuration.vc_dirs.each do |id, dir_str|
         puts "id=#{id}, dir=#{dir_str}"
@@ -22,7 +21,6 @@ module VCSYNC
       File.open(Configuration.dbfile, 'w') do |f|
         YAML::dump(alldirs, f)
       end
-
     end
 
     # Load Version Control Dirs from Database file (YAML)
@@ -33,6 +31,17 @@ module VCSYNC
       end
       File.open(Configuration.dbfile, 'r') do |f|
         YAML::load(f)
+      end
+    end
+
+    def list
+      alldirs = load_from_yaml
+      alldirs.each do |dir|
+        puts "#{dir.path}"
+        dir.remotes.each do |r|
+          puts "  #{r[:name]}: #{r[:url]}"
+        end unless dir.remotes.empty?
+        puts
       end
     end
 
@@ -62,12 +71,7 @@ module VCSYNC
     end
 
     def create_svn_version_dir(dir)
-      v = VersionDir.new
-      v.vc_type = :svn
-      v.path = dir.to_s
-      Dir.chdir(dir)
-      # todo svn info
-      v
+      SvnDir.new(dir)
     end
 
   end

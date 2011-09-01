@@ -40,14 +40,7 @@ class VcSyncRunner < Thor
   desc "list", "list all version control dirs in database file."
   def list
     scanner = Scanner.new
-    alldirs = scanner.load_from_yaml
-    alldirs.each do |dir|
-      puts "#{dir.path}"
-      dir.remotes.each do |r|
-        puts "  #{r[:name]}:#{r[:url]}"
-      end unless dir.remotes.empty?
-      puts
-    end
+    scanner.list
   end
 
 end
