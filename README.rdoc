@@ -79,6 +79,10 @@ vcsync skip <dir>
 
 考虑在vc_database中加密保存目录和url信息。
 
+TODO:
+* database中保存的应是group所在的子目录（相对目录），而不是绝对目录
+* 在database中保存last_revision，只有在检查到last_revision与当前目录的不一致时，才触发fetch或update命令，以提高速度
+
 = Other
 
 == Contributing to vcsync

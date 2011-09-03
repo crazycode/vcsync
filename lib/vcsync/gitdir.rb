@@ -10,6 +10,29 @@ module VCSYNC
       check_version_dir
     end
 
+    def update
+      Dir.chdir(@path)
+      # check if had some nocommit workings.
+      had_changed = `git status`.chomp.split('\n').grep(/nothing/).empty?
+      had_origin = false
+      @remotes.each do |remote|
+        if "origin".eql? remote[:name]
+          had_origin = true
+        end
+        puts "fetching #{remote[:name]}(#{remote[:url]})..."
+        system("git fetch #{remote[:name]}")
+      end
+      if !had_changed and had_origin
+        "merge origin/master ..."
+        system("git merge origin/master")
+      end
+    end
+
+    def cleanup
+      Dir.chdir(@path)
+      puts "do cleanup #{@path}"
+    end
+
     private
     def check_version_dir
       Dir.chdir(@path)

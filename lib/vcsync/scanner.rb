@@ -29,14 +29,18 @@ module VCSYNC
         puts "Not Found #{Configuration.dbfile}, please run 'vcsync sync' first!"
         return []
       end
-      File.open(Configuration.dbfile, 'r') do |f|
+      dirs = File.open(Configuration.dbfile, 'r') do |f|
         YAML::load(f)
+      end
+      if block_given?
+        dirs.each do |dir|
+          yield dir
+        end
       end
     end
 
     def list
-      alldirs = load_from_yaml
-      alldirs.each do |dir|
+      alldirs = load_from_yaml do |dir|
         puts "#{dir.path}"
         dir.remotes.each do |r|
           puts "  #{r[:name]}: #{r[:url]}"

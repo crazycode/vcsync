@@ -3,9 +3,16 @@ require 'thor'
 require 'pathname'
 require 'yaml'
 
+$curr_dir = nil
+# Trap for Ctrl-C
+trap("INT") {
+  $curr_dir.cleanup unless $curr_dir.nil?
+  exit!
+}
 
 class VcSyncRunner < Thor
   include VCSYNC
+  argument :group, :banner=>"group", :type => :array, :required => false
 
   desc "start", "start server"
   method_option :environment,:default => "development", :aliases => "-e",:desc => "which enviroment you want server run."
@@ -43,6 +50,24 @@ class VcSyncRunner < Thor
     scanner.list
   end
 
+  desc "update", "update all version control dirs."
+  def update
+    scanner = Scanner.new
+    puts group
+    require 'pp'
+    pp ARGV
+    scanner.load_from_yaml do |dir|
+      puts "dir=#{dir.path}"
+      $curr_dir = dir
+      if dir.vc_type == :git
+        dir.update
+      end
+    end
+  end
+
+  desc "fastupdate", "update only your changed on other computer."
+  def fastupdate
+  end
 end
 
 VcSyncRunner.start

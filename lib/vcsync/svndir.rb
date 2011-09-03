@@ -10,6 +10,21 @@ module VCSYNC
       check_version_dir
     end
 
+    def update
+      Dir.chdir(@path)
+      if remotes.size == 0
+        return
+      end
+      puts "update #{remotes[0][:url]}"
+      system('svn update')
+    end
+
+    def cleanup
+      Dir.chdir(@path)
+      puts "do cleanup #{@path}"
+      system('svn cleanup')
+    end
+
     private
     def check_version_dir
       Dir.chdir(@path)
