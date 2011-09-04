@@ -60,7 +60,7 @@ module VCSYNC
         require 'pp'
         pp ARGV
         scanner.load_from_yaml do |dir|
-          puts "dir=#{dir.path}"
+          puts "dir=#{dir.real_path}"
           $curr_dir = dir
           if dir.vc_type == :git
             dir.update

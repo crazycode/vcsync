@@ -1,17 +1,19 @@
+# -*- coding: utf-8 -*-
 require 'vcsync/model'
 module VCSYNC
 
   class SvnDir < VersionDir
     @@svn_url_regex = /^URL:\s+([^\s]+)$/
 
-    def initialize(dir)
+    def initialize(group_id, dir)
       @vc_type = :svn
-      @path = dir.to_s
+      @group_id = group_id
+      @path = get_relation_path(dir.to_s)
       check_version_dir
     end
 
     def update
-      Dir.chdir(@path)
+      Dir.chdir(real_path)
       if remotes.size == 0
         return
       end
@@ -20,14 +22,14 @@ module VCSYNC
     end
 
     def cleanup
-      Dir.chdir(@path)
-      puts "do cleanup #{@path}"
+      Dir.chdir(real_path)
+      puts "do cleanup #{real_path}"
       system('svn cleanup')
     end
 
     private
     def check_version_dir
-      Dir.chdir(@path)
+      Dir.chdir(real_path)
 
       @remotes = []
       # TODO: 测试windows环境LANG=en svn info是否正常

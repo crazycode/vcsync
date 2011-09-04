@@ -27,6 +27,24 @@ module VCSYNC
       config['vc_dir']
     end
 
+    def self.groups
+      config['vc_dir']
+    end
+
+    def self.find_group_path(group_id)
+      if self.groups[group_id].nil?
+        return nil
+      end
+
+      path = self.groups[group_id]
+      path.gsub!(/~/, ENV['HOME'])
+      path.gsub!(/\$HOME/, ENV['HOME'])
+      unless path.end_with?('/')
+        path += '/'
+      end
+      path
+    end
+
     def self.save(config)
       # TODO
     end

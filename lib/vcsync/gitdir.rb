@@ -4,14 +4,15 @@ module VCSYNC
   class GitDir < VersionDir
     @@git_remote_regex = /^([^\s]+)\s+([^\s]+)\s+\(fetch\)$/
 
-    def initialize(dir)
+    def initialize(group_id, dir)
       @vc_type = :git
-      @path = dir.to_s
+      @group_id = group_id
+      @path = get_relation_path(dir.to_s)
       check_version_dir
     end
 
     def update
-      Dir.chdir(@path)
+      Dir.chdir(real_path)
       # check if had some nocommit workings.
       had_changed = `git status`.chomp.split('\n').grep(/nothing/).empty?
       had_origin = false
@@ -29,13 +30,13 @@ module VCSYNC
     end
 
     def cleanup
-      Dir.chdir(@path)
-      puts "do cleanup #{@path}"
+      Dir.chdir(real_path)
+      puts "do cleanup #{real_path}"
     end
 
     private
     def check_version_dir
-      Dir.chdir(@path)
+      Dir.chdir(real_path)
 
       @remotes = []
       `git remote -v`.chomp.split('\n').each do |line|

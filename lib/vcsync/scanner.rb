@@ -6,14 +6,14 @@ module VCSYNC
 
     def sync_to_yaml
       alldirs = Array.new
-      Configuration.vc_dirs.each do |id, dir_str|
-        puts "id=#{id}, dir=#{dir_str}"
+      Configuration.vc_dirs.each do |group_id, dir_str|
+        puts "group_id=#{group_id}, dir=#{dir_str}"
         next if dir_str.nil?
 
         dir_str.gsub!(/~/, ENV['HOME'])
         dir_str.gsub!(/\$HOME/, ENV['HOME'])
         dir = Pathname.new(dir_str)
-        vdirs = find_vc(dir)
+        vdirs = find_vc(group_id, dir)
 
         alldirs += vdirs unless vdirs.nil?
       end
@@ -41,7 +41,7 @@ module VCSYNC
 
     def list
       alldirs = load_from_yaml do |dir|
-        puts "#{dir.path}"
+        puts "#{dir.real_path}"
         dir.remotes.each do |r|
           puts "  #{r[:name]}: #{r[:url]}"
         end unless dir.remotes.empty?
@@ -49,19 +49,19 @@ module VCSYNC
       end
     end
 
-    def find_vc(dir)
+    def find_vc(group_id, dir)
       return unless dir.directory?
 
       vdirs = []
       if File.directory?("#{dir}/.git")
-        vdirs << create_git_version_dir(dir)
+        vdirs << create_git_version_dir(group_id, dir)
       elsif File.directory?("#{dir}/.svn")
-        vdirs << create_svn_version_dir(dir)
+        vdirs << create_svn_version_dir(group_id, dir)
       else
         # check subdir
         dir.children.each do |subdir|
           if subdir.directory?
-            subvdirs = find_vc(subdir)
+            subvdirs = find_vc(group_id, subdir)
             vdirs += subvdirs unless subvdirs.nil?
           end
         end
@@ -70,12 +70,12 @@ module VCSYNC
     end
 
 
-    def create_git_version_dir(dir)
-      GitDir.new(dir)
+    def create_git_version_dir(group_id, dir)
+      GitDir.new(group_id, dir)
     end
 
-    def create_svn_version_dir(dir)
-      SvnDir.new(dir)
+    def create_svn_version_dir(group_id, dir)
+      SvnDir.new(group_id, dir)
     end
 
   end
