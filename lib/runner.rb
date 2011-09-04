@@ -3,12 +3,16 @@ require 'thor'
 require 'pathname'
 require 'yaml'
 
+
+require "clamp"
+
 $curr_dir = nil
 # Trap for Ctrl-C
 trap("INT") {
   $curr_dir.cleanup unless $curr_dir.nil?
   exit!
 }
+
 
 class VcSyncRunner < Thor
   include VCSYNC
