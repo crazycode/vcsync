@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'vcsync/model'
 module VCSYNC
 
@@ -27,6 +28,33 @@ module VCSYNC
         "merge origin/master ..."
         system("git merge origin/master")
       end
+    end
+
+    def check?
+      File.directory?("#{real_path}") && File.directory?("#{real_path}/.git")
+    end
+
+
+    def create
+      Fileutils.mkdir_p(real_path)
+      return if @remotes.empty?
+      # find default url
+      default_url = @remotes[0][:url]
+      @remotes.each do |remote|
+        if "origin".eql?(remote[:name])
+          default_url = remote[:url]
+        end
+      end
+
+      system("git clone #{default_url} #{real_path}")
+      Dir.chdir(real_path)
+      @remotes.each do |remote|
+        unless "origin".eql?(remote[:name])
+          system("git remote add #{remote[:name]} #{remote[:url]}")
+          system("git fetch #{remote[:name]}")
+        end
+      end
+
     end
 
     def cleanup

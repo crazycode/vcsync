@@ -37,7 +37,10 @@ module VCSYNC
       def execute
         puts "group=#{group}"
         scanner = Scanner.new
-        scanner.sync_to_yaml(group)
+        scanner.sync_to_yaml(group) {|dir|
+          # if dir exists, update it, else create it.
+          dir.check? ? dir.update : dir.create
+        }
       end
 
     end

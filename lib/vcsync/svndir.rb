@@ -21,6 +21,21 @@ module VCSYNC
       system('svn update')
     end
 
+
+    def check?
+      File.directory?("#{real_path}") && File.directory?("#{real_path}/.svn")
+    end
+
+    def create
+      Fileutils.mkdir_p(real_path)
+      return if @remotes.empty?
+
+      # find default url
+      default_url = @remotes[0][:url]
+
+      system("svn checkout #{default_url} #{real_path}")
+    end
+
     def cleanup
       Dir.chdir(real_path)
       puts "do cleanup #{real_path}"

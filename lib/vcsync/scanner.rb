@@ -24,6 +24,12 @@ module VCSYNC
 
       sortdirs = alldirs.to_a.sort {|x, y| x.real_path <=> y.real_path}
 
+      if block_given?
+        sortdirs.each do |dir|
+          yield dir
+        end
+      end
+
       File.open(Configuration.dbfile, 'w') do |f|
         YAML::dump(sortdirs, f)
       end
