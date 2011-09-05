@@ -14,6 +14,16 @@ module VCSYNC
     def real_path
       Configuration.find_group_path(@group_id) + @path
     end
+
+    def eql?(other)
+      return false if other.nil?
+      other.is_a?(VersionDir) && @group_id.eql?(other.group_id) && @path.eql?(other.path) && @vc_type == other.vc_type
+    end
+
+    def hash
+      @group_id.hash * 17 + @path.hash * 7 + @vc_type.hash
+    end
+
   end
 
 end

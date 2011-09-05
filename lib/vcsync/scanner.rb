@@ -1,11 +1,14 @@
 require 'pathname'
+require 'set'
+
 module VCSYNC
 
   class Scanner
 
 
     def sync_to_yaml(group = nil)
-      alldirs = Array.new
+      alldirs = Set.new load_from_yaml
+
       Configuration.vc_dirs.each do |group_id, dir_str|
         next if !group.nil? && group.eql?(group_id)
         puts "group_id=#{group_id}, dir=#{dir_str}"
@@ -19,8 +22,10 @@ module VCSYNC
         alldirs += vdirs unless vdirs.nil?
       end
 
+      sortdirs = alldirs.to_a.sort {|x, y| x.real_path <=> y.real_path}
+
       File.open(Configuration.dbfile, 'w') do |f|
-        YAML::dump(alldirs, f)
+        YAML::dump(sortdirs, f)
       end
     end
 
@@ -38,6 +43,7 @@ module VCSYNC
           yield dir
         end
       end
+      dirs
     end
 
     def list(action)
