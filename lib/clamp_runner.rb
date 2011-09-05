@@ -33,20 +33,21 @@ module VCSYNC
 
     class SyncCommand < AbstractCommand
 
-      parameter "[Group]", "Group Name", :default => "ALL"
+      parameter "[Group]", "Group Name", :attribute_name => :group, :default => "ALL"
       def execute
+        puts "group=#{group}"
         scanner = Scanner.new
-        scanner.sync_to_yaml
+        scanner.sync_to_yaml(group)
       end
 
     end
 
 
     class ListCommand < AbstractCommand
-      parameter "[Group]", "Group Name", :default => "ALL"
+      parameter "[action]", "Actons: {groups, dirs}", :attribute_name => :action, :default => "dirs"
       def execute
         scanner = Scanner.new
-        scanner.list
+        scanner.list(action)
       end
 
     end

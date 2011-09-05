@@ -4,9 +4,10 @@ module VCSYNC
   class Scanner
 
 
-    def sync_to_yaml
+    def sync_to_yaml(group = nil)
       alldirs = Array.new
       Configuration.vc_dirs.each do |group_id, dir_str|
+        next if !group.nil? && group.eql?(group_id)
         puts "group_id=#{group_id}, dir=#{dir_str}"
         next if dir_str.nil?
 
@@ -39,13 +40,20 @@ module VCSYNC
       end
     end
 
-    def list
-      alldirs = load_from_yaml do |dir|
-        puts "#{dir.real_path}"
-        dir.remotes.each do |r|
-          puts "  #{r[:name]}: #{r[:url]}"
-        end unless dir.remotes.empty?
-        puts
+    def list(action)
+      if "dirs".eql?(action.downcase)
+        alldirs = load_from_yaml do |dir|
+          puts "#{dir.real_path}"
+          dir.remotes.each do |r|
+            puts "  #{r[:name]}: #{r[:url]}"
+          end unless dir.remotes.empty?
+          puts
+        end
+
+      elsif "groups".eql?(action.downcase)
+        Configuration.groups.each {|group_id, dir|
+          puts "#{group_id}: #{dir}"
+        }
       end
     end
 
