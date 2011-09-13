@@ -34,6 +34,12 @@ module VCSYNC
       File.directory?("#{real_path}") && File.directory?("#{real_path}/.git")
     end
 
+    # Had something to commit?
+    def dirty?
+      Dir.chdir(real_path)
+      `git status`.chomp.split("\n").grep(/nothing/).empty?
+    end
+
 
     def create
       FileUtils.mkdir_p(real_path)

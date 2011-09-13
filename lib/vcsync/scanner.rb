@@ -30,26 +30,36 @@ module VCSYNC
         end
       end
 
-      File.open(Configuration.dbfile, 'w') do |f|
-        YAML::dump(sortdirs, f)
-      end
+      save_yaml_file(sortdirs)
     end
 
     # Load Version Control Dirs from Database file (YAML)
     def load_from_yaml
-      unless File.exists?(Configuration.dbfile)
-        # puts "Not Found #{Configuration.dbfile}, please run 'vcsync sync' first!"
-        return []
-      end
-      dirs = File.open(Configuration.dbfile, 'r') do |f|
-        YAML::load(f)
-      end
+      dirs = load_yaml_file
       if block_given?
         dirs.each do |dir|
           yield dir
         end
       end
       dirs
+    end
+
+    def remove_from_yaml(pwd, dir_path)
+      dirs = load_yaml_file
+      puts "try to remove <#{dir_path}> from database."
+      dirs.each do |dir|
+        if dir_path.eql? dir.real_path
+          unless dir.dirty?
+            dirs.delete(dir)
+            FileUtils.rm_rf(dir.real_path)
+          else
+            puts "#{dir.real_path} had something to commit! please check it first!"
+          end
+          save_yaml_file(dirs)
+          return
+        end
+      end
+      puts "Do nothing."
     end
 
     def list(action)
@@ -61,7 +71,6 @@ module VCSYNC
           end unless dir.remotes.empty?
           puts
         end
-
       elsif "groups".eql?(action.downcase)
         Configuration.groups.each {|group_id, dir|
           puts "#{group_id}: #{dir}"
@@ -89,6 +98,7 @@ module VCSYNC
       vdirs
     end
 
+    protected
 
     def create_git_version_dir(group_id, dir)
       GitDir.new(group_id, dir)
@@ -96,6 +106,22 @@ module VCSYNC
 
     def create_svn_version_dir(group_id, dir)
       SvnDir.new(group_id, dir)
+    end
+
+    def load_yaml_file
+      unless File.exists?(Configuration.dbfile)
+        # puts "Not Found #{Configuration.dbfile}, please run 'vcsync sync' first!"
+        return []
+      end
+      File.open(Configuration.dbfile, 'r') do |f|
+        YAML::load(f)
+      end
+    end
+
+    def save_yaml_file(dirs)
+      File.open(Configuration.dbfile, 'w') do |f|
+        YAML::dump(dirs, f)
+      end
     end
 
   end

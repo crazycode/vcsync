@@ -56,6 +56,16 @@ module VCSYNC
     end
 
 
+    class RemoveCommand < AbstractCommand
+      parameter "dir", "the dir to remove from vcsync.", :attribute_name => :dir
+      def execute
+        scanner = Scanner.new
+        scanner.remove_from_yaml(`pwd`, dir)
+      end
+
+    end
+
+
     class UpdateCommand < AbstractCommand
       parameter "[Group]", "Group Name", :default => "ALL"
       def execute
@@ -66,9 +76,7 @@ module VCSYNC
         scanner.load_from_yaml do |dir|
           puts "dir=#{dir.real_path}"
           $curr_dir = dir
-          if dir.vc_type == :git
-            dir.update
-          end
+          dir.update
         end
       end
 
@@ -76,11 +84,11 @@ module VCSYNC
 
 
     class MainCommand < AbstractCommand
-
       subcommand "test", "A test subcommand.", TestCommand
       subcommand "sync", "Sync Version Control Directories, if had some new repository, checkout it.", SyncCommand
       subcommand "list", "list all version control dirs in database file.", ListCommand
       subcommand "update", "update all version control dirs.", UpdateCommand
+      subcommand "remove", "remove dir from database.", RemoveCommand
     end
 
   end

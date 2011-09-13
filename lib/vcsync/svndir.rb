@@ -26,6 +26,12 @@ module VCSYNC
       File.directory?("#{real_path}") && File.directory?("#{real_path}/.svn")
     end
 
+
+    def dirty?
+      Dir.chdir(real_path)
+      `svn status`.chomp.split("\n").size > 0
+    end
+
     def create
       FileUtils.mkdir_p(real_path)
       return if @remotes.empty?
