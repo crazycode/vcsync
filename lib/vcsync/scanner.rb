@@ -38,7 +38,7 @@ module VCSYNC
     # Load Version Control Dirs from Database file (YAML)
     def load_from_yaml
       unless File.exists?(Configuration.dbfile)
-        puts "Not Found #{Configuration.dbfile}, please run 'vcsync sync' first!"
+        # puts "Not Found #{Configuration.dbfile}, please run 'vcsync sync' first!"
         return []
       end
       dirs = File.open(Configuration.dbfile, 'r') do |f|

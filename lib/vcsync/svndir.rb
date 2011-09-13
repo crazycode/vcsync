@@ -14,10 +14,10 @@ module VCSYNC
 
     def update
       Dir.chdir(real_path)
-      if remotes.size == 0
+      if @remotes.size == 0
         return
       end
-      puts "update #{remotes[0][:url]}"
+      puts "    update #{@remotes[0][:url]}"
       system('svn update')
     end
 
@@ -27,7 +27,7 @@ module VCSYNC
     end
 
     def create
-      Fileutils.mkdir_p(real_path)
+      FileUtils.mkdir_p(real_path)
       return if @remotes.empty?
 
       # find default url

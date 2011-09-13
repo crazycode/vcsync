@@ -36,7 +36,7 @@ module VCSYNC
 
 
     def create
-      Fileutils.mkdir_p(real_path)
+      FileUtils.mkdir_p(real_path)
       return if @remotes.empty?
       # find default url
       default_url = @remotes[0][:url]
