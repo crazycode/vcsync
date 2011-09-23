@@ -4,7 +4,6 @@ module VCSYNC
   class Configuration
 
     def self.load
-      puts ENV['HOME']
       @@config = YAML.load_file "#{ENV['HOME']}/.vcsync_config"
       raise "vc_database MUST be configure." if @@config['vc_database'].nil?
       raise "vc_dir MUST be configure." if @@config['vc_dir'].nil?

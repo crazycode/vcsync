@@ -82,11 +82,15 @@ module VCSYNC
       return unless dir.directory?
 
       vdirs = []
-      if File.directory?("#{dir}/.git")
-        vdirs << create_git_version_dir(group_id, dir)
-      elsif File.directory?("#{dir}/.svn")
-        vdirs << create_svn_version_dir(group_id, dir)
-      else
+
+      VersionDir.subclasses.each do |klass|
+        if klass.is_a?(dir)
+          vdirs << klass.new(group_id, dir)
+          break
+        end
+      end
+
+      if vdirs.empty?
         # check subdir
         dir.children.each do |subdir|
           if subdir.directory?
@@ -99,14 +103,6 @@ module VCSYNC
     end
 
     protected
-
-    def create_git_version_dir(group_id, dir)
-      GitDir.new(group_id, dir)
-    end
-
-    def create_svn_version_dir(group_id, dir)
-      SvnDir.new(group_id, dir)
-    end
 
     def load_yaml_file
       unless File.exists?(Configuration.dbfile)

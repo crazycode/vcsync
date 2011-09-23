@@ -23,6 +23,12 @@ module VCSYNC
 
       def execute
         require 'pp'
+        pp VersionDir.subclasses
+
+        VersionDir.subclasses.each do |klass|
+          puts klass.name
+        end
+
         pp Configuration.config
         pp Configuration.dbfile
         pp Configuration.vc_dirs

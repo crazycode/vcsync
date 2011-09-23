@@ -26,6 +26,10 @@ module VCSYNC
       File.directory?("#{real_path}") && File.directory?("#{real_path}/.svn")
     end
 
+    def self.is_a?(dir)
+      File.directory?("#{dir}/.svn")
+    end
+
 
     def dirty?
       Dir.chdir(real_path)

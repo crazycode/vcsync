@@ -1,7 +1,15 @@
 module VCSYNC
 
   class VersionDir
+    @@subclasses = nil
     attr_accessor :group_id, :path, :vc_type, :remotes
+
+    def self.subclasses
+      return @@subclasses if @@subclasses
+      @@subclasses = Array.new
+      ObjectSpace.each_object(Class) { |klass| @@subclasses << klass if klass < self }
+      @@subclasses
+    end
 
     def get_relation_path(dir)
       group_path = Configuration.find_group_path(@group_id)

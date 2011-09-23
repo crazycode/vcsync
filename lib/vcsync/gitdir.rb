@@ -13,6 +13,8 @@ module VCSYNC
     end
 
     def update
+      return unless check?
+
       Dir.chdir(real_path)
       # check if had some nocommit workings.
       had_changed = `git status`.chomp.split('\n').grep(/nothing/).empty?
@@ -61,6 +63,10 @@ module VCSYNC
         end
       end
 
+    end
+
+    def self.is_a?(dir)
+      File.directory?("#{dir}/.git")
     end
 
     def cleanup
