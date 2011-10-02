@@ -1,5 +1,6 @@
 require 'pathname'
 require 'set'
+require 'date'
 
 module VCSYNC
 
@@ -26,6 +27,7 @@ module VCSYNC
 
       if block_given?
         sortdirs.each do |dir|
+          next unless dir.valid?
           yield dir
         end
       end
@@ -50,7 +52,7 @@ module VCSYNC
       dirs.each do |dir|
         if dir_path.eql? dir.real_path
           unless dir.dirty?
-            dirs.delete(dir)
+            dir.deleted_at = DateTime.now
             FileUtils.rm_rf(dir.real_path)
           else
             puts "#{dir.real_path} had something to commit! please check it first!"
@@ -65,7 +67,7 @@ module VCSYNC
     def list(action)
       if "dirs".eql?(action.downcase)
         alldirs = load_from_yaml do |dir|
-          puts "#{dir.real_path}"
+          puts "#{dir.real_path} #{"DELETED" unless dir.valid?}"
           dir.remotes.each do |r|
             puts "  #{r[:name]}: #{r[:url]}"
           end unless dir.remotes.empty?

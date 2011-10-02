@@ -2,7 +2,7 @@ module VCSYNC
 
   class VersionDir
     @@subclasses = nil
-    attr_accessor :group_id, :path, :vc_type, :remotes
+    attr_accessor :group_id, :path, :vc_type, :remotes, :deleted_at
 
     def self.subclasses
       return @@subclasses if @@subclasses
@@ -26,6 +26,10 @@ module VCSYNC
     def eql?(other)
       return false if other.nil?
       other.is_a?(VersionDir) && @group_id.eql?(other.group_id) && @path.eql?(other.path) && @vc_type == other.vc_type
+    end
+
+    def valid?
+      @deleted_at.nil?
     end
 
     def hash
